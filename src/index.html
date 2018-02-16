@@ -16,7 +16,7 @@
   provided as part of the JET framework.
 
   Please see the demos under Cookbook/Patterns/App Shell: Web and the CSS documentation
-  under Support/API Docs/Non-Component Styling on the JET website for more information on how to use 
+  under Support/API Docs/Non-Component Styling on the JET website for more information on how to use
   the best practice patterns shown in this template.
 
   Aria Landmark role attributes are added to the different sections of the application
@@ -36,7 +36,7 @@
     <!-- injector:theme -->
     <link rel="stylesheet" href="css/libs/oj/v4.1.0/alta/oj-alta-min.css" type="text/css"/>
     <!-- endinjector -->
-    
+
     <!-- This contains icon fonts used by the starter template -->
     <link rel="stylesheet" href="css/demo-alta-site-min.css" type="text/css"/>
 
@@ -58,7 +58,7 @@
          ** Oracle JET V4.1.0 web application navigation drawer pattern.
          ** Please see the demos under Cookbook/Patterns/App Shell: Web
          ** and the CSS documentation under Support/API Docs/Non-Component Styling
-         ** on the JET website for more information on how to use this pattern. 
+         ** on the JET website for more information on how to use this pattern.
          ** The off-canvas section is used when the browser is resized to a smaller media
          ** query size for a phone format and hidden until a user clicks on
          ** the header hamburger icon.
@@ -104,6 +104,12 @@
                     <oj-option id="out" value="out">Sign Out</oj-option>
                   </oj-menu>
                 </oj-menu-button>
+                <!-- ko if: online() -->
+                <img src="css/images/ic_visibility_black_24dp_1x.png" alt="online" height="24" width="24" style="margin: auto;"/>
+                <!-- /ko -->
+                <!-- ko if: !online() -->
+                <img src="css/images/ic_visibility_off_black_24dp_1x.png" alt="offline" height="24" width="24" style="margin: auto;"/>
+                <!-- /ko -->
               </oj-toolbar>
             </div>
           </div>
@@ -132,7 +138,7 @@
         </footer>
       </div>
     </div>
-    
+
     <script type="text/javascript" src="js/libs/require/require.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 

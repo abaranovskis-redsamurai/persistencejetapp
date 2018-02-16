@@ -10,14 +10,21 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         'persist/pouchDBPersistenceStoreFactory',
         'persist/persistenceManager',
         'persist/defaultResponseProxy',
-        'ojs/ojmodel', 'ojs/ojpagingcontrol', 'ojs/ojbutton', 'ojs/ojlistview', 'ojs/ojarraydataprovider'],
+        'persist/oracleRestJsonShredding',
+        'persist/queryHandlers',
+        'ojs/ojmodel', 'ojs/ojpagingcontrol', 'ojs/ojbutton', 'ojs/ojlistview', 'ojs/ojarraydataprovider',
+        'ojs/ojinputtext'],
  function(oj, ko, $, persistenceStoreManager,
                      pouchDBPersistenceStoreFactory,
                      persistenceManager,
-                     defaultResponseProxy) {
+                     defaultResponseProxy,
+                     oracleRestJsonShredding,
+                     queryHandlers) {
 
     function DashboardViewModel() {
       var self = this;
+
+      self.searchName = ko.observable();
 
       self.allItems = ko.observableArray();
       self.dataProvider = new oj.ArrayDataProvider(self.allItems, {'idAttribute': 'id'});
@@ -27,7 +34,13 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       persistenceManager.init().then(function() {
         persistenceManager.register({scope: '/Employees'})
           .then(function(registration) {
-            var responseProxy = defaultResponseProxy.getResponseProxy();
+            var responseProxy = defaultResponseProxy.getResponseProxy({
+                jsonProcessor: {
+                    shredder: oracleRestJsonShredding.getShredder('emp', 'EmployeeId'),
+                    unshredder: oracleRestJsonShredding.getUnshredder()
+                },
+                queryHandler: queryHandlers.getOracleRestQueryHandler('emp')
+            });
             var fetchListener = responseProxy.getFetchEventListener();
             registration.addEventListener('fetch', fetchListener);
           });
@@ -45,6 +58,29 @@ define(['ojs/ojcore', 'knockout', 'jquery',
               for (i = 0; i < data.count; i++) {
                 self.allItems.push({"id": data.items[i].EmployeeId, "item": data.items[i].FirstName});
               }
+              console.log('Online: ' + persistenceManager.isOnline());
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.log('Fetch failed');
+            }
+        });
+      }
+
+      self.searchData = function(event) {
+        var searchUrl = "http://host:port/restapp/rest/1/Employees?q=FirstName='" + self.searchName() + "'";
+
+        $.ajax({
+            url: searchUrl,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data, textStatus, jqXHR) {
+              console.log(data);
+
+              self.allItems.removeAll();
+              for (i = 0; i < data.count; i++) {
+                self.allItems.push({"id": data.items[i].EmployeeId, "item": data.items[i].FirstName});
+              }
+              console.log('Online: ' + persistenceManager.isOnline());
             },
             error: function (jqXHR, textStatus, errorThrown) {
               console.log('Fetch failed');
