@@ -4,15 +4,15 @@
   "description": "An Oracle JavaScript Extension Toolkit(JET) web app",
   "dependencies": {
     "@oracle/offline-persistence-toolkit": "^1.0.1",
-    "@oracle/oraclejet": "~4.1.0",
-    "pouchdb": "^6.4.2",
-    "pouchdb-find": "^6.4.2"
+    "@oracle/oraclejet": "^4.2.0",
+    "@oracle/oraclejet-tooling": "^4.2.0",
+    "pouchdb": "^6.3.4",
+    "pouchdb-find": "^6.3.4"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
     "@oracle/grunt-oraclejet": "~4.1.0",
+    "grunt": "^1.0.1",
     "load-grunt-config": "0.19.2",
-    "@oracle/oraclejet-tooling": "~4.1.0",
     "qunit-reporter-junit": "^1.1.1",
     "qunitjs": "^2.3.3"
   },

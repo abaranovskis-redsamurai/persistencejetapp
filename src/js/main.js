@@ -23,9 +23,9 @@ requirejs.config(
     'promise': 'libs/es6-promise/es6-promise',
     'hammerjs': 'libs/hammer/hammer-2.0.8',
     'ojdnd': 'libs/dnd-polyfill/dnd-polyfill-1.0.0',
-    'ojs': 'libs/oj/v4.1.0/debug',
-    'ojL10n': 'libs/oj/v4.1.0/ojL10n',
-    'ojtranslations': 'libs/oj/v4.1.0/resources',
+    'ojs': 'libs/oj/v4.2.0/debug',
+    'ojL10n': 'libs/oj/v4.2.0/ojL10n',
+    'ojtranslations': 'libs/oj/v4.2.0/resources',
     'text': 'libs/require/text',
     'signals': 'libs/js-signals/signals',
     'customElements': 'libs/webcomponents/custom-elements.min',
@@ -33,7 +33,7 @@ requirejs.config(
     'css': 'libs/require-css/css',
     'pouchdb': 'libs/pouchdb-6.3.4/pouchdb',
     'pouchfind': 'libs/pouchdb-6.3.4/pouchdb.find',
-    'persist' : 'libs/persist'
+    'persist' : 'libs/persist/v1.0.1'
   }
   //endinjector
   ,

@@ -3,9 +3,15 @@
  The Universal Permissive License (UPL), Version 1.0
  -->
 <div class="oj-hybrid-padding">
-  <oj-button id='bt1' on-click='[[fetchData]]'>Get Employees</oj-button>
   <oj-button id='bt2' on-click='[[searchData]]'>Search By Name</oj-button>
   <oj-input-text id="it1" value="{{searchName}}"></oj-input-text>
+  <oj-button id='bt0' display='icons' on-click='[[fetchPrevious]]'>
+    <span slot='startIcon' class="oj-fwk-icon oj-fwk-icon-back"></span>
+    Previous
+  </oj-button>
+  <oj-button id='bt1' display='icons' on-click='[[fetchNext]]'>
+    <span slot='startIcon' class="oj-fwk-icon oj-fwk-icon-next"></span>
+    Next</oj-button>
   <oj-list-view id="emplsList" aria-label="Employees"
         data="[[dataProvider]]" selection-mode="single" item.renderer="[[renderer]]">
   </oj-list-view>
