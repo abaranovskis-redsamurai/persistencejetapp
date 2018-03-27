@@ -33,7 +33,7 @@ requirejs.config(
     'css': 'libs/require-css/css',
     'pouchdb': 'libs/pouchdb-6.3.4/pouchdb',
     'pouchfind': 'libs/pouchdb-6.3.4/pouchdb.find',
-    'persist' : 'libs/persist/v1.0.1'
+    'persist' : 'libs/persist/v1.1.1'
   }
   //endinjector
   ,

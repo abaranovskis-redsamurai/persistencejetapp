@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An Oracle JavaScript Extension Toolkit(JET) web app",
   "dependencies": {
-    "@oracle/offline-persistence-toolkit": "^1.0.1",
+    "@oracle/offline-persistence-toolkit": "^1.1.1",
     "@oracle/oraclejet": "^4.2.0",
     "@oracle/oraclejet-tooling": "^4.2.0",
     "pouchdb": "^6.3.4",

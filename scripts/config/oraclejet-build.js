@@ -48,7 +48,7 @@ module.exports = function () {
         fileList: [
             {cwd:'node_modules/@oracle/offline-persistence-toolkit/dist/debug',
              src: ['**'],
-             dest: 'web/js/libs/persist/v1.0.1'	},
+             dest: 'web/js/libs/persist/v1.1.1'	},
             {cwd:'node_modules/pouchdb/dist',
              src: ['*'],
              dest: 'web/js/libs/pouchdb-6.3.4'	}

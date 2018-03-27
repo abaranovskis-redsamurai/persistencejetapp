@@ -12,19 +12,23 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         'persist/defaultResponseProxy',
         'persist/oracleRestJsonShredding',
         'persist/queryHandlers',
+        'persist/impl/logger',
         'viewModels/helpers/employeesHelper',
         'ojs/ojmodel', 'ojs/ojpagingcontrol', 'ojs/ojbutton', 'ojs/ojlistview', 'ojs/ojarraydataprovider',
-        'ojs/ojinputtext'],
+        'ojs/ojinputtext', 'ojs/ojdialog', 'ojs/ojinputtext', 'ojs/ojlabel'],
  function(oj, ko, $, persistenceStoreManager,
                      pouchDBPersistenceStoreFactory,
                      persistenceManager,
                      defaultResponseProxy,
                      oracleRestJsonShredding,
                      queryHandlers,
+                     logger,
                      empls) {
 
     function DashboardViewModel() {
       var self = this;
+
+      window.addEventListener('online',  onlineHandler);
 
       var offsetVal = 0;
 
@@ -32,6 +36,14 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
       self.allItems = ko.observableArray();
       self.dataProvider = new oj.ArrayDataProvider(self.allItems, {'idAttribute': 'id'});
+      self.selectedItem = ko.observable();
+      self.employeeModel = ko.observable();
+      self.employeeId = ko.observable();
+      self.employeeName = ko.observable();
+
+      self.employeeModel(empls.createEmployeeModel());
+
+      logger.option('level',  logger.LEVEL_LOG);
 
       persistenceStoreManager.registerDefaultStoreFactory(pouchDBPersistenceStoreFactory);
 
@@ -49,6 +61,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
             registration.addEventListener('fetch', fetchListener);
           });
       });
+
 
       $.ajax({
           url: 'http://host:port/restapp/rest/1/Employees',
@@ -115,6 +128,54 @@ define(['ojs/ojcore', 'knockout', 'jquery',
               console.log('Fetch failed');
             }
         });
+      }
+
+      self.handleCurrentItemChanged = function(event) {
+        self.employeeId(self.selectedItem().data.id);
+        self.employeeName(self.selectedItem().data.item);
+
+        document.querySelector('#md1').open();
+      }
+
+      self.submitUpdate = function(event) {
+        self.employeeModel().save(self.buildEmployeeModel(), {
+            contentType: 'application/vnd.oracle.adf.resourceitem+json',
+            patch: 'patch',
+            success: function (model) {
+              console.log('DB UPDATE SUCCESS');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {}
+        });
+
+        for (var i = 0; i < self.allItems().length; i++) {
+          if (self.allItems()[i].id === self.employeeId()) {
+            self.allItems.splice(i, 1, {"id": self.employeeId(), "item": self.employeeName()});
+          }
+        }
+
+        document.querySelector('#md1').close();
+      }
+
+      self.buildEmployeeModel = function () {
+        return {
+            'EmployeeId': self.employeeId(),
+            'FirstName': self.employeeName()
+        };
+      };
+
+      self.synchOfflineChanges = function() {
+        persistenceManager.getSyncManager().sync().then(function () {
+          console.log('DB SYNCH DONE');
+          }, function (error) {
+            var requestId = error.requestId;
+            var response = error.response;
+            persistenceManager.getSyncManager().removeRequest(requestId);
+          }
+        );
+      };
+
+      function onlineHandler() {
+        self.synchOfflineChanges();
       }
 
       self.renderer = function(context) {

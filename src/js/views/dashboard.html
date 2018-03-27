@@ -12,7 +12,18 @@
   <oj-button id='bt1' display='icons' on-click='[[fetchNext]]'>
     <span slot='startIcon' class="oj-fwk-icon oj-fwk-icon-next"></span>
     Next</oj-button>
-  <oj-list-view id="emplsList" aria-label="Employees"
-        data="[[dataProvider]]" selection-mode="single" item.renderer="[[renderer]]">
+  <oj-list-view id="emplsList" aria-label="Employees" on-selection-changed="[[handleCurrentItemChanged]]"
+        data="[[dataProvider]]" selection-mode="single" item.renderer="[[renderer]]"
+        first-selected-item="{{selectedItem}}">
   </oj-list-view>
+  <oj-dialog style="display:none" id="md1" title="Edit">
+    <div slot="body">
+      <oj-label for="it1">First Name</oj-label>
+      <oj-input-text id="it1" value="{{employeeName}}"></oj-input-text>
+    </div>
+    <div slot="footer">
+      <oj-button id="okButton" data-bind="click: submitUpdate">  OK
+      </oj-button>
+    </div>
+  </oj-dialog>
 </div
