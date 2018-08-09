@@ -44,17 +44,6 @@ module.exports = function () {
     //  ]
     // }
 
-    copyCustomLibsToStaging: {
-        fileList: [
-            {cwd:'node_modules/@oracle/offline-persistence-toolkit/dist/debug',
-             src: ['**'],
-             dest: 'web/js/libs/persist/v1.1.1'	},
-            {cwd:'node_modules/pouchdb/dist',
-             src: ['*'],
-             dest: 'web/js/libs/pouchdb-6.3.4'	}
-            ]
-    },
-
 /**
  * # copySrcToStaging
  * This task copies all source files and libraries to staging directory.

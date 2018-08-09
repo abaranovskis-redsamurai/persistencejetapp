@@ -6,13 +6,13 @@
  * Your dashboard ViewModel code goes here
  */
 define(['ojs/ojcore', 'knockout', 'jquery',
-        'persist/persistenceStoreManager',
-        'persist/pouchDBPersistenceStoreFactory',
-        'persist/persistenceManager',
-        'persist/defaultResponseProxy',
-        'persist/oracleRestJsonShredding',
-        'persist/queryHandlers',
-        'persist/impl/logger',
+        'offline/persistenceStoreManager',
+        'offline/pouchDBPersistenceStoreFactory',
+        'offline/persistenceManager',
+        'offline/defaultResponseProxy',
+        'offline/oracleRestJsonShredding',
+        'offline/queryHandlers',
+        'offline/impl/logger',
         'viewModels/helpers/employeesHelper',
         'ojs/ojmodel', 'ojs/ojpagingcontrol', 'ojs/ojbutton', 'ojs/ojlistview', 'ojs/ojarraydataprovider',
         'ojs/ojinputtext', 'ojs/ojdialog', 'ojs/ojinputtext', 'ojs/ojlabel'],
@@ -64,15 +64,15 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
 
       $.ajax({
-          url: 'http://host:port/restapp/rest/1/Employees',
+          url: 'http://138.68.111.111:7001/restapp/rest/1/Employees',
           type: 'GET',
           dataType: 'json',
           success: function (data, textStatus, jqXHR) {
-            console.log(data);
-
             self.allItems.removeAll();
             for (i = 0; i < data.count; i++) {
-              self.allItems.push({"id": data.items[i].EmployeeId, "item": data.items[i].FirstName});
+              self.allItems.push({"id": data.items[i].EmployeeId, "firstName": data.items[i].FirstName,
+                                  "lastName": data.items[i].LastName, "email": data.items[i].Email,
+                                  "phoneNumber": data.items[i].PhoneNumber});
             }
             console.log('Online: ' + persistenceManager.isOnline());
           },
@@ -100,8 +100,9 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           success:function (collection, response, options) {
             self.allItems.removeAll();
             for (i = 0; i < collection.size(); i++) {
-              self.allItems.push({"id": collection.models[i].attributes.EmployeeId, "item": collection.models[i].attributes.FirstName});
-              console.log(collection.models[i].attributes.FirstName);
+              self.allItems.push({"id": collection.models[i].attributes.EmployeeId, "firstName": collection.models[i].attributes.FirstName,
+                                  "lastName": collection.models[i].attributes.LastName, "email": collection.models[i].attributes.Email,
+                                  "phoneNumber": collection.models[i].attributes.PhoneNumber});
             }
             console.log('Online: ' + persistenceManager.isOnline());
           }
@@ -109,18 +110,18 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       }
 
       self.searchData = function(event) {
-        var searchUrl = "http://host:port/restapp/rest/1/Employees?q=FirstName='" + self.searchName() + "'";
+        var searchUrl = "http://138.68.111.111:7001/restapp/rest/1/Employees?q=FirstName='" + self.searchName() + "'";
 
         $.ajax({
             url: searchUrl,
             type: 'GET',
             dataType: 'json',
             success: function (data, textStatus, jqXHR) {
-              console.log(data);
-
               self.allItems.removeAll();
               for (i = 0; i < data.count; i++) {
-                self.allItems.push({"id": data.items[i].EmployeeId, "item": data.items[i].FirstName});
+                self.allItems.push({"id": data.items[i].EmployeeId, "firstName": data.items[i].FirstName,
+                                    "lastName": data.items[i].LastName, "email": data.items[i].Email,
+                                    "phoneNumber": data.items[i].PhoneNumber});
               }
               console.log('Online: ' + persistenceManager.isOnline());
             },
@@ -132,7 +133,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
       self.handleCurrentItemChanged = function(event) {
         self.employeeId(self.selectedItem().data.id);
-        self.employeeName(self.selectedItem().data.item);
+        self.employeeName(self.selectedItem().data.firstName);
 
         document.querySelector('#md1').open();
       }
@@ -149,7 +150,9 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
         for (var i = 0; i < self.allItems().length; i++) {
           if (self.allItems()[i].id === self.employeeId()) {
-            self.allItems.splice(i, 1, {"id": self.employeeId(), "item": self.employeeName()});
+            self.allItems.splice(i, 1, {"id": self.allItems()[i].id, "firstName": self.employeeName(),
+                                        "lastName": self.allItems()[i].lastName, "email": self.allItems()[i].email,
+                                        "phoneNumber": self.allItems()[i].phoneNumber});
           }
         }
 
@@ -164,12 +167,30 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       };
 
       self.synchOfflineChanges = function() {
-        persistenceManager.getSyncManager().sync().then(function () {
-          console.log('DB SYNCH DONE');
+        persistenceManager.getSyncManager().getSyncLog().then(async function (data) {
+            for (var i = 0; i < data.length; i++) {
+              if (data[i].request.method === 'GET') {
+                var requestId = data[i].requestId;
+
+                await new Promise(next=> {
+                  persistenceManager.getSyncManager().removeRequest(requestId).then(function (request) {
+                    console.log('SYNCH CANCELLED FOR GET REQUEST: ' + request.url);
+                    next();
+                  });
+                });
+              }
+            }
+
+            persistenceManager.getSyncManager().sync({preflightOptionsRequest: 'disabled'}).then(function () {
+              console.log('SYNCH DONE');
+              }, function (error) {
+                var requestId = error.requestId;
+                console.log('SYNCH FAILED: ' + requestId);
+              }
+            );
           }, function (error) {
-            var requestId = error.requestId;
-            var response = error.response;
-            persistenceManager.getSyncManager().removeRequest(requestId);
+            var statusCode = error.response.status;
+            console.log(statusCode);
           }
         );
       };
@@ -177,10 +198,6 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       function onlineHandler() {
         self.synchOfflineChanges();
       }
-
-      self.renderer = function(context) {
-        return {'insert':context['data']['item']};
-      };
     }
     return new DashboardViewModel();
   }

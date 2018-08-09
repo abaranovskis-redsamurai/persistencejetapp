@@ -13,8 +13,23 @@
     <span slot='startIcon' class="oj-fwk-icon oj-fwk-icon-next"></span>
     Next</oj-button>
   <oj-list-view id="emplsList" aria-label="Employees" on-selection-changed="[[handleCurrentItemChanged]]"
-        data="[[dataProvider]]" selection-mode="single" item.renderer="[[renderer]]"
-        first-selected-item="{{selectedItem}}">
+        data="[[dataProvider]]" selection-mode="single" first-selected-item="{{selectedItem}}">
+      <template slot="itemTemplate">
+        <div class="oj-flex oj-flex-items-pad">
+          <div class="oj-sm-2 oj-flex-item">
+            <oj-bind-text value='[[$current.data.firstName]]'></oj-bind-text>
+          </div>
+          <div class="oj-sm-2 oj-flex-item">
+            <oj-bind-text value='[[$current.data.lastName]]'></oj-bind-text>
+          </div>
+          <div class="oj-sm-2 oj-flex-item">
+            <oj-bind-text value='[[$current.data.email]]'></oj-bind-text>
+          </div>
+          <div class="oj-sm-2 oj-flex-item">
+            <oj-bind-text value='[[$current.data.phoneNumber]]'></oj-bind-text>
+          </div>
+        </div>
+      </template>
   </oj-list-view>
   <oj-dialog style="display:none" id="md1" title="Edit">
     <div slot="body">

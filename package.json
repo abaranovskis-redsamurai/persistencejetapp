@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "An Oracle JavaScript Extension Toolkit(JET) web app",
   "dependencies": {
-    "@oracle/offline-persistence-toolkit": "^1.1.1",
-    "@oracle/oraclejet": "^4.2.0",
-    "@oracle/oraclejet-tooling": "^4.2.0",
+    "@oracle/offline-persistence-toolkit": "^1.1.5",
+    "@oracle/oraclejet": "^5.1.0",
+    "@oracle/oraclejet-tooling": "^5.1.0",
     "pouchdb": "^6.3.4",
     "pouchdb-find": "^6.3.4"
   },
