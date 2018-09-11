@@ -2,7 +2,7 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
 
     function EmployeesHelperViewModule() {
         var self = this;
-        var urlEmployees = "http://138.68.111.111:7001/restapp/rest/1/Employees";
+        var urlEmployees = "http://138.68.79.219:7001/restapp/rest/1/Employees";
 
         self.createEmployeeModel = function () {
             var EmployeeModel = oj.Model.extend({
@@ -36,6 +36,10 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
 
             return new EmployeesCollection();
         };
+
+        self.getEmployeesEndpointURL = function () {
+          return urlEmployees;
+        }
     }
 
     return new EmployeesHelperViewModule();

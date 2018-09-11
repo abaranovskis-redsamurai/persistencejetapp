@@ -37,8 +37,32 @@
       <oj-input-text id="it1" value="{{employeeName}}"></oj-input-text>
     </div>
     <div slot="footer">
-      <oj-button id="okButton" data-bind="click: submitUpdate">  OK
+      <oj-button id="okButton" data-bind="click: submitUpdate">OK
       </oj-button>
+    </div>
+  </oj-dialog>
+  <oj-dialog style="display:none;width:400px;min-width:400px;" id="md2" title="">
+    <div slot="header">
+      <oj-bind-text value='[[onlineConflictResolutionTitle]]'></oj-bind-text>
+    </div>
+    <div slot="body">
+      Apply your changes?
+    </div>
+    <div slot="footer">
+      <oj-button id="yesButton" data-bind="click: applyClientChangesToServer">Yes</oj-button>
+      <oj-button id="noButton" data-bind="click: cancelClientChangesToServer">No</oj-button>
+    </div>
+  </oj-dialog>
+  <oj-dialog style="display:none;width:400px;min-width:400px;" id="md3" title="">
+    <div slot="header">
+      <oj-bind-text value='[[onlineConflictResolutionTitle]]'></oj-bind-text>
+    </div>
+    <div slot="body">
+      Apply your changes?
+    </div>
+    <div slot="footer">
+      <oj-button id="yesButton" data-bind="click: applyOfflineClientChangesToServer">Yes</oj-button>
+      <oj-button id="noButton" data-bind="click: cancelOfflineClientChangesToServer">No</oj-button>
     </div>
   </oj-dialog>
 </div

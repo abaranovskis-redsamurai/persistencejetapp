@@ -71,9 +71,9 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojrouter', 'ojs/ojknockout', 'ojs/ojarray
 
       // Header
       // Application Name used in Branding Area
-      self.appName = ko.observable("App Name");
+      self.appName = ko.observable("Red Samurai Offline Toolkit Application");
       // User Info used in Global Navigation area
-      self.userLogin = ko.observable("john.hancock@oracle.com");
+      self.userLogin = ko.observable("abaranovskis@redsamuraiconsulting.com");
 
       // Footer
       function footerLink(name, id, linkTarget) {
@@ -82,11 +82,11 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojrouter', 'ojs/ojknockout', 'ojs/ojarray
         this.linkTarget = linkTarget;
       }
       self.footerLinks = ko.observableArray([
-        new footerLink('About Oracle', 'aboutOracle', 'http://www.oracle.com/us/corporate/index.html#menu-about'),
-        new footerLink('Contact Us', 'contactUs', 'http://www.oracle.com/us/corporate/contact/index.html'),
-        new footerLink('Legal Notices', 'legalNotices', 'http://www.oracle.com/us/legal/index.html'),
-        new footerLink('Terms Of Use', 'termsOfUse', 'http://www.oracle.com/us/legal/terms/index.html'),
-        new footerLink('Your Privacy Rights', 'yourPrivacyRights', 'http://www.oracle.com/us/legal/privacy/index.html')
+        new footerLink('About Red Samurai Consulting', 'aboutOracle', 'http://www.redsamuraiconsulting.com/'),
+        new footerLink('Contact Us', 'contactUs', 'http://www.redsamuraiconsulting.com/'),
+        new footerLink('Legal Notices', 'legalNotices', 'http://www.redsamuraiconsulting.com/'),
+        new footerLink('Terms Of Use', 'termsOfUse', 'http://www.redsamuraiconsulting.com/'),
+        new footerLink('Your Privacy Rights', 'yourPrivacyRights', 'http://www.redsamuraiconsulting.com/')
       ]);
      }
 
