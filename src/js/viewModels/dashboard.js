@@ -47,6 +47,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
       var synchErrorRequestId;
       var synchErrorChangeIndicatorAttr;
+      var employeeSynchMap = {};
 
       self.employeeModel(empls.createEmployeeModel());
 
@@ -72,6 +73,8 @@ define(['ojs/ojcore', 'knockout', 'jquery',
             self.fetchData();
           });
 
+          // handles request data before synch
+          persistenceManager.getSyncManager().addEventListener('beforeSyncRequest', self.beforeRequestListener,  '/Employees' );
           // handles response data after synch
           persistenceManager.getSyncManager().addEventListener('syncRequest', self.afterRequestListener,  '/Employees' );
       });
@@ -241,7 +244,8 @@ define(['ojs/ojcore', 'knockout', 'jquery',
             }
 
             persistenceManager.getSyncManager().sync({preflightOptionsRequest: 'disabled'}).then(function () {
-              console.log('SYNCH DONE');
+                employeeSynchMap = {};
+                console.log('SYNCH DONE');
               }, function (error) {
                 var statusCode = error.response.status;
 
@@ -266,6 +270,38 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         );
       };
 
+      self.beforeRequestListener = function (event) {
+        var request = event.request;
+
+        return new Promise(function (resolve, reject) {
+          persistenceUtils.requestToJSON(request).then(function (data) {
+            var empl = JSON.parse(data.body.text);
+            var employeeId = empl.EmployeeId;
+
+            var updateRequest = false;
+            for (var i in employeeSynchMap) {
+              if (parseInt(i) === parseInt(employeeId)) {
+                updateRequest = true;
+
+                var changeIndicatorVal = employeeSynchMap[i];
+                empl.ChangeIndicatorAttr = changeIndicatorVal;
+                data.body.text = JSON.stringify(empl);
+
+                persistenceUtils.requestFromJSON(data).then(function (updatedRequest) {
+                  resolve({action: 'replay', request: updatedRequest});
+                });
+
+                break;
+              }
+            }
+
+            if (!updateRequest) {
+              resolve({action: 'continue'});
+            }
+          });
+        });
+      }
+
       self.afterRequestListener = function (event) {
         // invoked if offline synch for request for success, to bring back values updated in backend
         var statusCode = event.response.status;
@@ -280,6 +316,9 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                                              "lastName": self.allItems()[i].lastName, "email": self.allItems()[i].email,
                                              "phoneNumber": self.allItems()[i].phoneNumber,
                                              "changeIndicatorAttr": changeIndicatorAttr});
+
+                 employeeSynchMap[id] = changeIndicatorAttr;
+
                  console.log('UPDATE SUCCESS IN SYNCH FOR: ' + id + ', WITH NEW CHANGE INDICATOR: ' + changeIndicatorAttr);
                  break;
                }
