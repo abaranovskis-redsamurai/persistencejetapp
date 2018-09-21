@@ -55,6 +55,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
       persistenceStoreManager.registerDefaultStoreFactory(pouchDBPersistenceStoreFactory);
 
+      // STEP 1
       persistenceManager.init().then(function() {
         persistenceManager.register({scope: '/Employees'})
           .then(function(registration) {
@@ -79,6 +80,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           persistenceManager.getSyncManager().addEventListener('syncRequest', self.afterRequestListener,  '/Employees' );
       });
 
+      // STEP 2
       // invoked, while PATCH executed in offline mode - updating local cache, to allow offline search
       var customHandlePatch = function(request) {
           if (!persistenceManager.isOnline()) {
@@ -227,6 +229,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         };
       };
 
+      // STEP 3
       self.synchOfflineChanges = function() {
         persistenceManager.getSyncManager().getSyncLog().then(async function (data) {
             for (var i = 0; i < data.length; i++) {
@@ -270,6 +273,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         );
       };
 
+      // STEP 5
       self.beforeRequestListener = function (event) {
         var request = event.request;
 
@@ -302,8 +306,9 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         });
       }
 
+      // STEP 4
       self.afterRequestListener = function (event) {
-        // invoked if offline synch for request for success, to bring back values updated in backend
+        // invoked if offline synch for request was success, to bring back values updated in backend
         var statusCode = event.response.status;
         if (statusCode ==  200) {
            event.response.json().then(function(response) {
@@ -341,6 +346,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         self.refreshEntry(searchUrl);
       }
 
+      // STEP 6
       self.applyOfflineClientChangesToServer = function(event) {
         persistenceManager.getSyncManager().removeRequest(synchErrorRequestId).then(function (request) {
           $("#md3").ojDialog("close");
@@ -359,6 +365,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         });
       }
 
+      // STEP 7
       self.cancelOfflineClientChangesToServer = function(event) {
         persistenceManager.getSyncManager().removeRequest(synchErrorRequestId).then(function (request) {
           $("#md3").ojDialog("close");
